@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Tourism - Explore Jharkhand</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f7; /* Lighter, cleaner background */
+        }
+
+        .font-playfair {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Hero section background */
+        .hero-section {
+             background-image: linear-gradient(to right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.2)), url('https://tourism.jharkhand.gov.in/app-assets/images/WaterFall&Dam.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 60vh;
+        }
+        
+        /* Animation classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Card hover effect */
+        .destination-card {
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,.07), 0 4px 6px -4px rgba(0,0,0,.07);
+            transition: all 0.3s ease-in-out;
+            border: 1px solid #eee;
+        }
+        .destination-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .destination-card .image-container {
+             height: 250px;
+             overflow: hidden;
+        }
+        .destination-card img {
+            transition: transform 0.3s ease-in-out;
+        }
+        .destination-card:hover img {
+            transform: scale(1.1);
+        }
+        .knno-more {
+            font-size: 0.8rem;
+            color: #16a60a;
+            font-weight: bold;
+        }
+        
+        .gallery-img {
+             transition: transform 0.3s ease, filter 0.3s ease;
+        }
+        
+        .gallery-img:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2E7D32;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1B5E20;
+        }
+
+        /* Floating Action Button (FAB) styles */
+        .fab-wrapper {
+            position: fixed;
+            bottom: 3rem;
+            right: 3rem;
+            z-index: 999;
+        }
+        .fab-checkbox {
+            display: none;
+        }
+        .fab {
+            position: absolute;
+            bottom: -1rem;
+            right: -1rem;
+            width: 4rem;
+            height: 4rem;
+            background: #2E7D32;
+            border-radius: 50%;
+            box-shadow: 0px 5px 20px #1B5E20;
+            transition: all 0.3s ease;
+            z-index: 1;
+            border: 2px solid #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .fab:hover {
+            background: #1B5E20;
+        }
+        .fab .icon {
+             font-size: 2rem;
+             color: white;
+             transition: transform 0.3s ease;
+        }
+        .fab-checkbox:checked ~ .fab .icon {
+             transform: rotate(45deg);
+        }
+        .fab-wheel {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 14rem;
+            height: 14rem;
+            transition: all 0.4s ease;
+            transform-origin: bottom right;
+            transform: scale(0);
+        }
+        .fab-checkbox:checked ~ .fab-wheel {
+            transform: scale(1);
+        }
+        .fab-action {
+            position: absolute;
+            background: #4CAF50;
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: White;
+            box-shadow: 0 0.1rem 1rem rgba(24, 66, 154, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            cursor: pointer;
+        }
+        .fab-checkbox:checked ~ .fab-wheel .fab-action {
+             opacity: 1;
+        }
+        .fab-action:hover {
+            background-color: #388E3C;
+        }
+        .fab-wheel .fab-action-1 { transform: translate(-8rem, 0rem); }
+        .fab-wheel .fab-action-2 { transform: translate(-7.5rem, -4rem); }
+        .fab-wheel .fab-action-3 { transform: translate(-4rem, -7.5rem); }
+        .fab-wheel .fab-action-4 { transform: translate(0rem, -8rem); }
+        .fab-wheel .fab-action-5 { transform: translate(-5.5rem, -5.5rem); }
+        
+        .fab-action .icon { font-size: 1.5rem; }
+
+        /* Footer styles */
+        .footer-classic-main {
+            background-image: linear-gradient(to top, rgba(10, 40, 30, 0.98), rgba(10, 40, 30, 0.85)), url(https://tourism.jharkhand.gov.in/app-assets/image/6.jpg);
+            background-size: cover;
+            background-position: center;
+        }
+        
+        /* Dropdown menu */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            min-width: 220px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 8px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-content a:hover {background-color: #ddd;}
+        .dropdown:hover .dropdown-content {display: block;}
+
+        /* AI Search Modal */
+        #ai-search-modal {
+            transition: opacity 0.3s ease;
+        }
+        #ai-search-modal .modal-content {
+            transition: transform 0.3s ease;
+        }
+        #ai-search-modal .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2E7D32;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Header -->
+    <header id="header" class="bg-white shadow-md fixed w-full z-50 transition-all duration-300 py-2">
+        <nav class="container mx-auto px-6 flex justify-between items-center">
+             <div class="flex items-center space-x-3">
+                 <img src="https://www.jharkhand.gov.in/Site/Dist/template/images/emblem.png" alt="Jharkhand Logo" class="h-12">
+                 <a class="text-xl font-bold text-green-800 font-playfair" href="#">Smart Tourism Jharkhand</a>
+             </div>
+            <div class="hidden md:flex space-x-6 items-center">
+                <div class="dropdown">
+                    <button class="text-gray-600 hover:text-green-700 transition duration-300 font-semibold">Explore</button>
+                    <div class="dropdown-content">
+                      <a href="#">Adventure Tourism</a>
+                      <a href="#">Eco Tourism</a>
+                      <a href="#">Heritage Tourism</a>
+                      <a href="#">Religious Tourism</a>
+                      <a href="#">Rural Tourism</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                     <button class="text-gray-600 hover:text-green-700 transition duration-300 font-semibold">Book Hotel</button>
+                    <div class="dropdown-content">
+                        <a href="#">Hotel</a>
+                        <a href="#">Jharkhand At a Glance</a>
+                        <a href="#">Tourist Map</a>
+                    </div>
+                </div>
+                 <div class="dropdown">
+                     <button class="text-gray-600 hover:text-green-700 transition duration-300 font-semibold">Experience</button>
+                     <div class="dropdown-content">
+                        <a href="#">Eat and Out</a>
+                        <a href="#">Fair & Festivals</a>
+                        <a href="#">Events</a>
+                     </div>
+                 </div>
+                 <a href="#" class="text-gray-600 hover:text-green-700 transition duration-300 font-semibold">Contact</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-gray-700">
+                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden px-6 pt-2 pb-4">
+             <a href="#home" class="block text-gray-600 hover:text-green-700 py-2">Explore</a>
+             <a href="#destinations" class="block text-gray-600 hover:text-green-700 py-2">Book Hotel</a>
+             <a href="#culture" class="block text-gray-600 hover:text-green-700 py-2">Experience</a>
+             <a href="#contact" class="block text-gray-600 hover:text-green-700 py-2">Contact</a>
+             <a href="#booking" class="block bg-green-600 text-white text-center mt-2 px-5 py-2 rounded-full hover:bg-green-700 transition duration-300">Book a Trip</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section flex items-center justify-center text-white pt-20">
+        <div class="text-center space-y-6 reveal container mx-auto px-6">
+            <h1 class="text-5xl md:text-6xl font-extrabold font-playfair leading-tight drop-shadow-xl">Waterfalls, Dams & Lakes</h1>
+            <p class="text-lg md:text-xl max-w-3xl mx-auto font-light drop-shadow-lg">
+                Explore the pristine waterfalls, lush forests, and vibrant tribal culture of Jharkhand. A land of untold beauty awaits.
+            </p>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                 <div class="reveal grid grid-cols-2 gap-4 h-[500px]">
+                    <img class="gallery-img rounded-lg shadow-xl object-cover w-full h-full col-span-1 row-span-2" src="https://tourism.jharkhand.gov.in/assets/images/Lake1.jpg" alt="Lake 1">
+                    <img class="gallery-img rounded-lg shadow-xl object-cover w-full h-full" src="https://tourism.jharkhand.gov.in/assets/images/lake2.jpg" alt="Lake 2">
+                </div>
+                <div class="reveal p-8 rounded-lg" style="background-color: #1a472a; border: 3px solid #e2c044;">
+                    <h4 class="text-xl font-bold text-white font-playfair" style="font-family: 'Baloo', cursive; color: #ffbf00;">Water Fall & Dam</h4>
+                    <h2 class="text-3xl font-bold text-white my-3"><span style="color: #ffbf00;">Explore</span> the <span style="color: #ffbf00;">Water</span> world with us</h2>
+                    <p class="text-gray-200 leading-relaxed text-justify">
+                       Jharkhand’s awesome scenic beauty never disappoints you. Not just the lush forest, but the great water bodies, falls and dams make perfect picnic spots for that quiet day to be spent in the arms of nature. The warm sun, tinkling water, manmade architectural beauties in the form of dams make it worth a visit.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Destinations Section -->
+    <section id="destinations" class="py-20 bg-emerald-50/50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12 reveal">
+                <h2 class="text-4xl font-bold font-playfair text-gray-800">Our Destination List</h2>
+                <p class="text-gray-600 mt-2 max-w-2xl mx-auto">Discover the must-visit locations that make Jharkhand a unique travel experience.</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Dynamically create cards from an array of data -->
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer id="contact" class="footer-classic-main bg-image context-dark text-white py-16">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-12">
+                <div>
+                    <h5 class="font-bold text-xl mb-4 font-playfair text-emerald-300">Quick Links</h5>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#" class="hover:text-emerald-300 transition-colors">Home</a></li>
+                        <li><a href="#" class="hover:text-emerald-300 transition-colors">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-emerald-300 transition-colors">Policy and Rules</a></li>
+                        <li><a href="#" class="hover:text-emerald-300 transition-colors">Tender</a></li>
+                        <li><a href="#" class="hover:text-emerald-300 transition-colors">FAQ</a></li>
+                        <li><a href="#" class="hover:text-emerald-300 transition-colors">Feedback</a></li>
+                    </ul>
+                </div>
+                 <div>
+                    <h5 class="font-bold text-xl mb-4 font-playfair text-emerald-300">Get in touch</h5>
+                     <div class="text-gray-300 space-y-4">
+                        <p class="font-semibold">Directorate of Tourism</p>
+                        <p>MDI Building, 3rd Floor, Dhurva, Ranchi-834004</p>
+                        <p><i class="mdi mdi-email"></i> : dirjharkhandtourism@gmail.com</p>
+                        <p class="font-semibold mt-4">Department of Tourism</p>
+                        <p>FFP Building 2nd Floor Dhurva, Ranchi-834004</p>
+                     </div>
+                </div>
+                 <div>
+                    <h5 class="font-bold text-xl mb-4 font-playfair text-emerald-300">Online Booking & Support</h5>
+                     <div class="text-gray-300 space-y-4">
+                        <p><i class="mdi mdi-email"></i> : jtdcltd@gmail.com</p>
+                        <p><i class="mdi mdi-phone"></i> : 0651-2331828, 2331643</p>
+                        <p class="font-semibold mt-4">Jharkhand Tourism Development Corporation Ltd</p>
+                        <p>6th Floor, Premium Suit Building JUPMI Campus, Plant Plaza Road Dhurwa, Ranchi-834004</p>
+                     </div>
+                </div>
+            </div>
+            <div class="text-center mt-12 pt-8 border-t border-gray-700/50 text-gray-400">
+                <p>&copy; 2025 Smart Tourism Jharkhand. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Action Button -->
+    <div class="fab-wrapper">
+        <input id="fab-checkbox" type="checkbox" class="fab-checkbox" />
+        <label class="fab" for="fab-checkbox">
+            <span class="icon mdi mdi-plus"></span>
+        </label>
+        <div class="fab-wheel">
+            <a class="fab-action fab-action-1" title="Book a Car">
+                <i class="icon mdi mdi-car"></i>
+            </a>
+            <a class="fab-action fab-action-2" title="Book a Bike">
+                <i class="icon mdi mdi-motorbike"></i>
+            </a>
+            <a class="fab-action fab-action-3" title="Book a Bus">
+                 <i class="icon mdi mdi-bus"></i>
+            </a>
+            <a id="ai-search-button" class="fab-action fab-action-4" title="AI Search">
+                 <i class="icon mdi mdi-robot-outline"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- AI Search Modal -->
+    <div id="ai-search-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-[1000] p-4 opacity-0">
+        <div class="modal-content bg-white rounded-lg shadow-2xl w-full max-w-2xl p-6 md:p-8 transform scale-95">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold font-playfair text-green-800">AI-Powered Travel Assistant</h3>
+                <button id="close-ai-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <p class="text-gray-600 mb-6">Ask for travel suggestions, itineraries, or information about Jharkhand.</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <label for="ai-query" class="block text-sm font-medium text-gray-700 mb-1">Your Question:</label>
+                    <textarea id="ai-query" rows="3" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="e.g., Suggest a 2-day family-friendly trip from Ranchi"></textarea>
+                </div>
+                 <div>
+                    <label for="api-key" class="block text-sm font-medium text-gray-700 mb-1">Your API Key:</label>
+                    <input type="password" id="api-key" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Enter your Google AI API Key here">
+                </div>
+                <button id="generate-ai-response" class="w-full bg-green-700 text-white font-bold py-3 px-4 rounded-md hover:bg-green-800 transition duration-300 flex items-center justify-center">
+                    Generate Recommendation
+                </button>
+            </div>
+
+            <div id="ai-response-container" class="mt-6 border-t pt-4">
+                 <h4 class="font-bold text-lg mb-2">Recommendation:</h4>
+                 <div id="ai-response" class="text-gray-700 space-y-2 prose">
+                    Your personalized travel plan will appear here.
+                 </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Destinations Data
+        const destinations = [
+            { name: "Chandil Dam", img: "https://tourism.jharkhand.gov.in/cms/Application/uploadDocuments/location/355X300/location20241212_121427.jpg", distance: 104, location: "Saraikela Kharsawan" },
+            { name: "Ghaghari Dham", img: "https://tourism.jharkhand.gov.in/cms/Application/uploadDocuments/location/355X300/location20200928_110812.jpg", distance: 49, location: "Ranchi" },
+            { name: "Sitarampur Dam", img: "https://tourism.jharkhand.gov.in/cms/Application/uploadDocuments/location/355X300/location20190606_123729.jpg", distance: 125, location: "Saraikela Kharsawan" },
+            { name: "Getalsud Dam", img: "https://tourism.jharkhand.gov.in/cms/Application/uploadDocuments/location/355X300/location20190604_170640.jpg", distance: 30, location: "Ranchi" },
+            { name: "Garga Dam", img: "https://tourism.jharkhand.gov.in/cms/Application/uploadDocuments/location/355X300/location20190604_162509.jpg", distance: 110, location: "Bokaro" },
+            { name: "Palna Dam", img: "https://tourism.jharkhand.gov.in/cms/Application/uploadDocuments/location/355X300/location20190604_152911.jpg", distance: 90, location: "Saraikela Kharsawan" },
+            { name: "Jonha Falls", img: "https://tourism.jharkhand.gov.in/cms/Application/uploadDocuments/location/355X300/location20160229_121800.jpg", distance: 40, location: "Ranchi" },
+            { name: "Lodh Waterfalls", img: "https://tourism.jharkhand.gov.in/cms/Application/uploadDocuments/location/355X300/location20180426_002517.jpg", distance: 200, location: "Latehar" }
+        ];
+
+        // Populate Destination Cards
+        const destinationContainer = document.querySelector('#destinations .grid');
+        destinations.forEach((dest, index) => {
+            const delay = index * 100;
+            const card = `
+                <div class="destination-card bg-white rounded-lg overflow-hidden reveal" style="transition-delay: ${delay}ms;">
+                    <div class="image-container">
+                        <img src="${dest.img}" alt="${dest.name}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h4 class="text-lg font-bold font-playfair mb-2">${dest.name}</h4>
+                        <div class="flex justify-between items-center text-xs text-gray-600">
+                           <p><i class="mdi mdi-map-marker"></i> ${dest.distance} km from Ranchi</p>
+                           <p><i class="mdi mdi-weather-partly-cloudy"></i> ${dest.location}</p>
+                        </div>
+                    </div>
+                    <div class="px-4 pb-4">
+                        <a href="#" class="knno-more">Know More <i class="mdi mdi-arrow-right"></i></a>
+                    </div>
+                </div>
+            `;
+            destinationContainer.innerHTML += card;
+        });
+
+        // Scroll Animations
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealOnScroll = () => {
+            const windowHeight = window.innerHeight;
+            revealElements.forEach(el => {
+                const elementTop = el.getBoundingClientRect().top;
+                if (elementTop < windowHeight - 100) {
+                    el.classList.add('visible');
+                }
+            });
+        };
+        window.addEventListener('scroll', revealOnScroll);
+        revealOnScroll();
+
+        // Header Scroll Effect
+        $(window).scroll(function(){
+            var value = $(this).scrollTop();
+            const header = $('#header');
+            if (value > 50) {
+                header.removeClass('py-2').addClass('py-1');
+            } else {
+                header.removeClass('py-1').addClass('py-2');
+            }
+        });
+        
+        // Mobile Menu Toggle
+        $('#mobile-menu-button').click(() => {
+            $('#mobile-menu').toggleClass('hidden');
+        });
+
+        // AI Search Modal Logic
+        const aiModal = document.getElementById('ai-search-modal');
+        const openAiBtn = document.getElementById('ai-search-button');
+        const closeAiBtn = document.getElementById('close-ai-modal');
+        const generateBtn = document.getElementById('generate-ai-response');
+        const aiResponseEl = document.getElementById('ai-response');
+
+        const openAiModal = () => {
+            aiModal.classList.remove('hidden');
+            setTimeout(() => {
+                aiModal.classList.add('opacity-100');
+                aiModal.querySelector('.modal-content').classList.add('scale-100');
+            }, 10);
+        };
+
+        const closeAiModal = () => {
+            aiModal.classList.remove('opacity-100');
+            aiModal.querySelector('.modal-content').classList.remove('scale-100');
+            setTimeout(() => {
+                 aiModal.classList.add('hidden');
+            }, 300);
+        };
+        
+        openAiBtn.addEventListener('click', openAiModal);
+        closeAiBtn.addEventListener('click', closeAiModal);
+        aiModal.addEventListener('click', (e) => {
+            if(e.target === aiModal) {
+                closeAiModal();
+            }
+        });
+        
+        // --- Gemini API Call ---
+        const handleAiSearch = async () => {
+            const userQuery = document.getElementById('ai-query').value;
+            const apiKey = document.getElementById('api-key').value;
+
+            if (!userQuery.trim()) {
+                aiResponseEl.innerHTML = '<p class="text-red-500">Please enter a question.</p>';
+                return;
+            }
+            if (!apiKey.trim()) {
+                aiResponseEl.innerHTML = '<p class="text-red-500">Please enter your Google AI API key.</p>';
+                return;
+            }
+
+            aiResponseEl.innerHTML = '<div class="flex justify-center"><div class="loader"></div></div>';
+
+            const systemPrompt = "You are an expert tour guide for Jharkhand, India. Provide concise, helpful, and friendly travel recommendations based on the user's request. Format your response with clear headings and bullet points for readability. Use markdown for formatting.";
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: userQuery }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] },
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error.message || `API request failed with status ${response.status}`);
+                }
+
+                const result = await response.json();
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                
+                if (text) {
+                     // Basic markdown to HTML conversion
+                    let htmlText = text
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                        .replace(/(\r\n|\n|\r)/g, '<br>');
+                    aiResponseEl.innerHTML = htmlText;
+                } else {
+                   aiResponseEl.innerHTML = '<p class="text-red-500">Could not retrieve a valid response. Please check your query or API key.</p>';
+                }
+
+            } catch (error) {
+                 console.error('AI Search Error:', error);
+                 aiResponseEl.innerHTML = `<p class="text-red-500">An error occurred: ${error.message}. Please check the console for details.</p>`;
+            }
+        };
+
+        generateBtn.addEventListener('click', handleAiSearch);
+    </script>
+</body>
+</html>
+
